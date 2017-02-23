@@ -25,14 +25,14 @@ model slides =
     }
 
 
-update : Array Slide -> Msg -> Model -> Model
+update : Array Slide -> Msg -> Model -> ( Model, Cmd Msg )
 update slides msg model =
     case msg of
         Next ->
-            model |> nextSlide slides
+            ( model |> nextSlide slides, Cmd.none )
 
         Previous ->
-            model |> previousSlide slides
+            ( model |> previousSlide slides, Cmd.none )
 
 
 nextSlide : Array Slide -> Model -> Model
@@ -134,13 +134,25 @@ appView app =
     slideView [ (text "Empty app") ]
 
 
+init : Array Slide -> ( Model, Cmd Msg )
+init slides =
+    ( model slides, Cmd.none )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
 {-|
     program []
+
 -}
 program : Array Slide -> Program Never Model Msg
 program slides =
-    Html.beginnerProgram
-        { model = model slides
+    Html.program
+        { init = init slides
         , view = view
         , update = update slides
+        , subscriptions = subscriptions
         }
