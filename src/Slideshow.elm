@@ -12,6 +12,7 @@ import Json.Decode as Decode
 import Json.Encode exposing (string)
 import Array exposing (Array)
 import VirtualDom
+import InlineHover exposing (hover)
 
 
 emptySlide =
@@ -83,8 +84,9 @@ backLinkStyle =
     , ( "position", "fixed" )
     , ( "top", "0" )
     , ( "left", "0" )
-    , ( "background", "black" )
+    , ( "background", "white" )
     , ( "color", "white" )
+    , ( "cursor", "pointer" )
     ]
 
 
@@ -105,13 +107,10 @@ view model =
         ]
         [ stylesheetLink "styles.css"
         , div [] model.slide.content
-        , div
-            [ style backLinkStyle
-            , onWithOptions "click"
-                { preventDefault = True, stopPropagation = True }
-                (Decode.succeed Previous)
-            ]
-            [ text "<-" ]
+        , hover [ ( "background", "rgba(0, 0, 0, 0.1)" ) ]
+            div
+            [ style backLinkStyle ]
+            []
         ]
 
 
