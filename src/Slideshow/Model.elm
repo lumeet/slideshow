@@ -1,7 +1,7 @@
-module Slideshow.Model exposing (Model, Slide, Msg(..))
+module Slideshow.Model exposing (Model, Page, Slide(..), Msg(..))
 
 {-|
-@docs Model, Slide, Msg(Next, Previous)
+@docs Model, Slide, Page, Msg(Next, Previous)
 -}
 
 import Html exposing (Html)
@@ -17,8 +17,21 @@ type alias Model =
 
 {-|
 -}
-type alias Slide =
+type alias Page =
     { content : List (Html Msg) }
+
+
+{-|
+-}
+type alias App =
+    {}
+
+
+{-|
+-}
+type Slide
+    = PageView Page
+    | AppView App
 
 
 {-|

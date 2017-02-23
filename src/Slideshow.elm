@@ -4,7 +4,7 @@ module Slideshow exposing (program)
 @docs program
 -}
 
-import Slideshow.Model exposing (Model, Slide, Msg(..))
+import Slideshow.Model exposing (Model, Slide(..), Msg(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style, property)
 import Html.Events exposing (onClick, onWithOptions)
@@ -16,7 +16,7 @@ import InlineHover exposing (hover)
 
 
 emptySlide =
-    { content = [] }
+    PageView { content = [] }
 
 
 model slides =
@@ -25,6 +25,7 @@ model slides =
     }
 
 
+update : Array Slide -> Msg -> Model -> Model
 update slides msg model =
     case msg of
         Next ->
@@ -34,6 +35,7 @@ update slides msg model =
             model |> previousSlide slides
 
 
+nextSlide : Array Slide -> Model -> Model
 nextSlide slides model =
     let
         slideNo =
@@ -60,6 +62,7 @@ previousSlide slides model =
         model |> updateSlideAt slides slideNo
 
 
+updateSlideAt : Array Slide -> Int -> Model -> Model
 updateSlideAt slides slideNo model =
     case Array.get slideNo slides of
         Just slide ->
@@ -101,17 +104,34 @@ stylesheetLink url =
 
 
 view model =
+    case model.slide of
+        PageView page ->
+            pageView page
+
+        AppView page ->
+            appView page
+
+
+slideView content =
     div
         [ style bodyStyle
         , onClick Next
         ]
         [ stylesheetLink "styles.css"
-        , div [] model.slide.content
+        , div [] content
         , hover [ ( "background", "rgba(0, 0, 0, 0.1)" ) ]
             div
             [ style backLinkStyle ]
             []
         ]
+
+
+pageView page =
+    slideView page.content
+
+
+appView app =
+    slideView [ (text "Empty app") ]
 
 
 {-|
