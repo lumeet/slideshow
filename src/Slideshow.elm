@@ -121,7 +121,11 @@ slideView content =
         , div [] content
         , hover [ ( "background", "rgba(0, 0, 0, 0.1)" ) ]
             div
-            [ style backLinkStyle ]
+            [ style backLinkStyle
+            , onWithOptions "click"
+                { preventDefault = True, stopPropagation = True }
+                (Decode.succeed Previous)
+            ]
             []
         ]
 
