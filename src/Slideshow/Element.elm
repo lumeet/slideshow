@@ -1,4 +1,4 @@
-module Slideshow.Element exposing (title, subtitle, heading, list)
+module Slideshow.Element exposing (title, subtitle, heading, list, quote)
 
 {-| heading
     subtitle
@@ -8,7 +8,7 @@ module Slideshow.Element exposing (title, subtitle, heading, list)
 -}
 
 import Slideshow.Model exposing (Msg(..))
-import Html exposing (Html, h1, text, div, ul, li)
+import Html exposing (Html, h1, text, div, ul, li, blockquote)
 import Html.Attributes exposing (style)
 
 
@@ -59,3 +59,8 @@ list items =
             (\item -> li [] [ text item ])
             items
         )
+
+
+quote : String -> Html Msg
+quote str =
+    blockquote [] [ text str ]
