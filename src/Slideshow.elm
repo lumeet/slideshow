@@ -16,7 +16,7 @@ import InlineHover exposing (hover)
 
 
 emptySlide =
-    PageView { content = [] }
+    PageSlide { content = [] }
 
 
 model slides =
@@ -33,6 +33,9 @@ update slides msg model =
 
         Previous ->
             ( model |> previousSlide slides, Cmd.none )
+
+        AppMsg appMsg ->
+            model |> processAppMsg appMsg
 
 
 nextSlide : Array Slide -> Model -> Model
@@ -72,6 +75,10 @@ updateSlideAt slides slideNo model =
             { model | slide = emptySlide, currentNo = Nothing }
 
 
+processAppMsg msg model =
+    ( model, Cmd.none )
+
+
 bodyStyle =
     [ ( "width", "100%" )
     , ( "height", "100%" )
@@ -105,10 +112,10 @@ stylesheetLink url =
 
 view model =
     case model.slide of
-        PageView page ->
+        PageSlide page ->
             pageView page
 
-        AppView page ->
+        AppSlide page ->
             appView page
 
 
@@ -135,7 +142,8 @@ pageView page =
 
 
 appView app =
-    slideView [ (text "Empty app") ]
+    slideView
+        [ div [] [ text "Empty app" ] ]
 
 
 init : Array Slide -> ( Model, Cmd Msg )

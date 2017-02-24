@@ -24,14 +24,14 @@ type alias Page =
 {-|
 -}
 type alias App =
-    {}
+    { msg : Msg }
 
 
 {-|
 -}
 type Slide
-    = PageView Page
-    | AppView App
+    = PageSlide Page
+    | AppSlide App
 
 
 {-|
@@ -39,3 +39,4 @@ type Slide
 type Msg
     = Next
     | Previous
+    | AppMsg String
