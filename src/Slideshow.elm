@@ -88,16 +88,23 @@ bodyStyle =
     ]
 
 
-backLinkStyle =
+linkStyle =
     [ ( "width", "100px" )
     , ( "height", "100%" )
     , ( "position", "fixed" )
     , ( "top", "0" )
-    , ( "left", "0" )
     , ( "background", "white" )
     , ( "color", "white" )
     , ( "cursor", "pointer" )
     ]
+
+
+backLinkStyle =
+    ( "left", "0" ) :: linkStyle
+
+
+forwardLinkStyle =
+    ( "right", "0" ) :: linkStyle
 
 
 stylesheetLink url =
@@ -119,31 +126,45 @@ view model =
             appView page
 
 
-slideView content =
+pageView { content } =
     div
         [ style bodyStyle
         , onClick Next
         ]
         [ stylesheetLink "styles.css"
         , div [] content
-        , hover [ ( "background", "rgba(0, 0, 0, 0.1)" ) ]
-            div
-            [ style backLinkStyle
-            , onWithOptions "click"
-                { preventDefault = True, stopPropagation = True }
-                (Decode.succeed Previous)
-            ]
-            []
+        , backLinkView
         ]
 
 
-pageView page =
-    slideView page.content
-
-
 appView app =
-    slideView
-        [ div [] [ text "Empty app" ] ]
+    div
+        [ style bodyStyle
+        ]
+        [ stylesheetLink "styles.css"
+        , div [] [ text "Empty App" ]
+        , backLinkView
+        , forwardLinkView
+        ]
+
+
+backLinkView =
+    linkView Previous backLinkStyle
+
+
+forwardLinkView =
+    linkView Next forwardLinkStyle
+
+
+linkView action styles =
+    hover [ ( "background", "rgba(0, 0, 0, 0.1)" ) ]
+        div
+        [ style styles
+        , onWithOptions "click"
+            { preventDefault = True, stopPropagation = True }
+            (Decode.succeed action)
+        ]
+        []
 
 
 init : Array Slide -> ( Model, Cmd Msg )
