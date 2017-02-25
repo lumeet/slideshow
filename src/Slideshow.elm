@@ -1,7 +1,7 @@
-module Slideshow exposing (model, view, update, subscriptions)
+module Slideshow exposing (view, update, subscriptions)
 
 {-|
-@docs model,update, subscriptions, view
+@docs update, subscriptions, view
 -}
 
 import Slideshow.Model exposing (Model, Page, Slide(..), Msg(..))
@@ -15,18 +15,9 @@ import VirtualDom
 import InlineHover exposing (hover)
 
 
-{-| model
--}
-model : Model
-model =
-    { currentNo = Nothing
-    , slideCount = 0
-    }
-
-
 {-| update
 -}
-update : Array a -> a -> Msg -> Model -> ( a, Model, Cmd Msg )
+update : Array a -> a -> Msg -> Model a -> ( Model a, Cmd Msg )
 update slides emptySlide msg model =
     let
         ( newModel, cmds ) =
@@ -45,7 +36,7 @@ update slides emptySlide msg model =
                 Nothing ->
                     emptySlide
     in
-        ( newSlide, newModel, cmds )
+        ( { newModel | slide = newSlide }, cmds )
 
 
 updateM msg model =
@@ -57,7 +48,7 @@ updateM msg model =
             ( model |> previousSlide, Cmd.none )
 
 
-nextSlide : Model -> Model
+nextSlide : Model a -> Model a
 nextSlide model =
     let
         { currentNo, slideCount } =
@@ -77,7 +68,7 @@ nextSlide model =
         model |> updateSlideAt slideNo
 
 
-previousSlide : Model -> Model
+previousSlide : Model a -> Model a
 previousSlide model =
     let
         { currentNo, slideCount } =
@@ -97,7 +88,7 @@ previousSlide model =
         model |> updateSlideAt slideNo
 
 
-updateSlideAt : Int -> Model -> Model
+updateSlideAt : Int -> Model a -> Model a
 updateSlideAt slideNo model =
     { model | currentNo = Just slideNo }
 
@@ -146,7 +137,7 @@ stylesheetLink url =
 
 {-| view
 -}
-view : Page -> Model -> Html Msg
+view : Page -> Model a -> Html Msg
 view page model =
     pageView page
 
@@ -192,15 +183,8 @@ linkView action styles =
         []
 
 
-{-| init
--}
-init : ( Model, Cmd Msg )
-init =
-    ( model, Cmd.none )
-
-
 {-| subscriptions
 -}
-subscriptions : Model -> Sub Msg
+subscriptions : Model a -> Sub Msg
 subscriptions model =
     Sub.none

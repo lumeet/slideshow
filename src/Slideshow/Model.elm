@@ -9,9 +9,10 @@ import Html exposing (Html)
 
 {-|
 -}
-type alias Model =
+type alias Model slideType =
     { slideCount : Int
     , currentNo : Maybe Int
+    , slide : slideType
     }
 
 
