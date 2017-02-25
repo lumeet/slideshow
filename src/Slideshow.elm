@@ -1,10 +1,10 @@
-module Slideshow exposing (program)
+module Slideshow exposing (model, view, update, subscriptions)
 
-{-| program
-@docs program
+{-|
+@docs model,update, subscriptions, view
 -}
 
-import Slideshow.Model exposing (Model, Slide(..), Msg(..))
+import Slideshow.Model exposing (Model, Page, Slide(..), Msg(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style, property)
 import Html.Events exposing (onClick, onWithOptions)
@@ -15,64 +15,91 @@ import VirtualDom
 import InlineHover exposing (hover)
 
 
-emptySlide =
-    PageSlide { content = [] }
-
-
-model slides =
-    { slide = emptySlide
-    , currentNo = Nothing
+{-| model
+-}
+model : Model
+model =
+    { currentNo = Nothing
+    , slideCount = 0
     }
 
 
-update : Array Slide -> Msg -> Model -> ( Model, Cmd Msg )
-update slides msg model =
+{-| update
+-}
+update : Array a -> a -> Msg -> Model -> ( a, Model, Cmd Msg )
+update slides emptySlide msg model =
+    let
+        ( newModel, cmds ) =
+            updateM msg model
+
+        newSlide =
+            case newModel.currentNo of
+                Just slideNo ->
+                    case Array.get slideNo slides of
+                        Just slide ->
+                            slide
+
+                        Nothing ->
+                            emptySlide
+
+                Nothing ->
+                    emptySlide
+    in
+        ( newSlide, newModel, cmds )
+
+
+updateM msg model =
     case msg of
         Next ->
-            ( model |> nextSlide slides, Cmd.none )
+            ( model |> nextSlide, Cmd.none )
 
         Previous ->
-            ( model |> previousSlide slides, Cmd.none )
-
-        AppMsg appMsg ->
-            model |> processAppMsg appMsg
+            ( model |> previousSlide, Cmd.none )
 
 
-nextSlide : Array Slide -> Model -> Model
-nextSlide slides model =
+nextSlide : Model -> Model
+nextSlide model =
     let
+        { currentNo, slideCount } =
+            model
+
         slideNo =
-            case model.currentNo of
+            case currentNo of
                 Just num ->
-                    num + 1
+                    if num + 1 < slideCount then
+                        num + 1
+                    else
+                        0
 
                 Nothing ->
                     0
     in
-        model |> updateSlideAt slides slideNo
+        model |> updateSlideAt slideNo
 
 
-previousSlide slides model =
+previousSlide : Model -> Model
+previousSlide model =
     let
+        { currentNo, slideCount } =
+            model
+
         slideNo =
-            case model.currentNo of
+            case currentNo of
                 Just num ->
-                    num - 1
+                    if num - 1 < 0 then
+                        slideCount - 1
+                    else
+                        num - 1
 
                 Nothing ->
-                    (Array.length slides) - 1
+                    0
     in
-        model |> updateSlideAt slides slideNo
+        model |> updateSlideAt slideNo
 
 
-updateSlideAt : Array Slide -> Int -> Model -> Model
-updateSlideAt slides slideNo model =
-    case Array.get slideNo slides of
-        Just slide ->
-            { model | slide = slide, currentNo = Just slideNo }
-
-        Nothing ->
-            { model | slide = emptySlide, currentNo = Nothing }
+updateSlideAt : Int -> Model -> Model
+updateSlideAt slideNo model =
+    { model | currentNo = Just slideNo }
 
 
 processAppMsg msg model =
@@ -117,13 +144,11 @@ stylesheetLink url =
         []
 
 
-view model =
-    case model.slide of
-        PageSlide page ->
-            pageView page
-
-        AppSlide page ->
-            appView page
+{-| view
+-}
+view : Page -> Model -> Html Msg
+view page model =
+    pageView page
 
 
 pageView { content } =
@@ -167,25 +192,15 @@ linkView action styles =
         []
 
 
-init : Array Slide -> ( Model, Cmd Msg )
-init slides =
-    ( model slides, Cmd.none )
+{-| init
+-}
+init : ( Model, Cmd Msg )
+init =
+    ( model, Cmd.none )
 
 
+{-| subscriptions
+-}
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
-
-
-{-|
-    program []
-
--}
-program : Array Slide -> Program Never Model Msg
-program slides =
-    Html.program
-        { init = init slides
-        , view = view
-        , update = update slides
-        , subscriptions = subscriptions
-        }

@@ -10,7 +10,7 @@ import Html exposing (Html)
 {-|
 -}
 type alias Model =
-    { slide : Slide
+    { slideCount : Int
     , currentNo : Maybe Int
     }
 
@@ -24,7 +24,10 @@ type alias Page =
 {-|
 -}
 type alias App =
-    { msg : Msg }
+    { --    , update : Msg -> Model -> ( Model, Cmd Msg )
+      --    , subscriptions : Model -> Sub Msg
+      --    , view : Model -> Html Msg
+    }
 
 
 {-|
@@ -39,4 +42,7 @@ type Slide
 type Msg
     = Next
     | Previous
-    | AppMsg String
+
+
+
+--| AppMsg String

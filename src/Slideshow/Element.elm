@@ -4,7 +4,8 @@ module Slideshow.Element exposing (title, subtitle, heading, list, quote)
     subtitle
     title
     list
-@docs heading, title, subtitle, list
+    quote
+@docs heading, title, subtitle, list, quote
 -}
 
 import Slideshow.Model exposing (Msg(..))
@@ -61,6 +62,9 @@ list items =
         )
 
 
+{-|
+    title "x"
+-}
 quote : String -> Html Msg
 quote str =
     blockquote [] [ text str ]
