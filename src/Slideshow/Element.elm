@@ -8,7 +8,7 @@ module Slideshow.Element exposing (title, subtitle, heading, list, quote)
 @docs heading, title, subtitle, list, quote
 -}
 
-import Slideshow.Model exposing (Msg(..))
+import Slideshow.Msgs exposing (Msg(..))
 import Html exposing (Html, h1, text, div, ul, li, blockquote)
 import Html.Attributes exposing (style)
 

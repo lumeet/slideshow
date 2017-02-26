@@ -1,9 +1,10 @@
-module Slideshow.Model exposing (Model, Page, Msg(..))
+module Slideshow.Model exposing (Model, Page)
 
 {-|
-@docs Model, Page, Msg(Next, Previous)
+@docs Model, Page
 -}
 
+import Slideshow.Msgs exposing (Msg)
 import Html exposing (Html)
 
 
@@ -19,23 +20,3 @@ type alias Model slideType =
 -}
 type alias Page =
     { content : List (Html Msg) }
-
-
-{-|
--}
-type alias App =
-    { --    , update : Msg -> Model -> ( Model, Cmd Msg )
-      --    , subscriptions : Model -> Sub Msg
-      --    , view : Model -> Html Msg
-    }
-
-
-{-|
--}
-type Msg
-    = Next
-    | Previous
-
-
-
---| AppMsg String
