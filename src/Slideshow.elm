@@ -4,7 +4,8 @@ module Slideshow exposing (view, update, subscriptions)
 @docs update, subscriptions, view
 -}
 
-import Slideshow.Model exposing (Model, Page, Slide(..), Msg(..))
+import Slideshow.Model exposing (Model, Page, Msg(..))
+import Slideshow.Update exposing (nextSlide, previousSlide)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style, property)
 import Html.Events exposing (onClick, onWithOptions)
@@ -17,84 +18,14 @@ import InlineHover exposing (hover)
 
 {-| update
 -}
-update : Array a -> a -> Msg -> Model a -> ( Model a, Cmd Msg )
+update : Array slide -> slide -> Msg -> Model slide -> ( Model slide, Cmd Msg )
 update slides emptySlide msg model =
-    let
-        ( newModel, cmds ) =
-            updateM msg model
-
-        newSlide =
-            case newModel.currentNo of
-                Just slideNo ->
-                    case Array.get slideNo slides of
-                        Just slide ->
-                            slide
-
-                        Nothing ->
-                            emptySlide
-
-                Nothing ->
-                    emptySlide
-    in
-        ( { newModel | slide = newSlide }, cmds )
-
-
-updateM msg model =
     case msg of
         Next ->
-            ( model |> nextSlide, Cmd.none )
+            ( model |> nextSlide slides emptySlide, Cmd.none )
 
         Previous ->
-            ( model |> previousSlide, Cmd.none )
-
-
-nextSlide : Model a -> Model a
-nextSlide model =
-    let
-        { currentNo, slideCount } =
-            model
-
-        slideNo =
-            case currentNo of
-                Just num ->
-                    if num + 1 < slideCount then
-                        num + 1
-                    else
-                        0
-
-                Nothing ->
-                    0
-    in
-        model |> updateSlideAt slideNo
-
-
-previousSlide : Model a -> Model a
-previousSlide model =
-    let
-        { currentNo, slideCount } =
-            model
-
-        slideNo =
-            case currentNo of
-                Just num ->
-                    if num - 1 < 0 then
-                        slideCount - 1
-                    else
-                        num - 1
-
-                Nothing ->
-                    0
-    in
-        model |> updateSlideAt slideNo
-
-
-updateSlideAt : Int -> Model a -> Model a
-updateSlideAt slideNo model =
-    { model | currentNo = Just slideNo }
-
-
-processAppMsg msg model =
-    ( model, Cmd.none )
+            ( model |> previousSlide slides emptySlide, Cmd.none )
 
 
 bodyStyle =
