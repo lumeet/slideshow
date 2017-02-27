@@ -1,5 +1,9 @@
 module Slideshow.View exposing (htmlView, appView)
 
+{-|
+@docs htmlView, appView
+-}
+
 import Slideshow.Model exposing (Model, Page)
 import Slideshow.Msgs exposing (Msg(..))
 import Html exposing (Html, div, text)
@@ -11,6 +15,9 @@ import VirtualDom
 import InlineHover exposing (hover)
 
 
+{-|
+  htmlView
+-}
 htmlView : Page -> Html Msg
 htmlView { content } =
     div
@@ -23,15 +30,18 @@ htmlView { content } =
         ]
 
 
-appView : Model slide -> Html Msg
-appView slide =
+{-|
+  appView
+-}
+appView : (appMsg -> msg) -> (Msg -> msg) -> Html appMsg -> Html msg
+appView mapAppMsg mapSlideshowMsg view =
     div
         [ style bodyStyle
         ]
         [ stylesheetLink "styles.css"
-        , div [] [ text "Empty App" ]
-        , backLinkView
-        , forwardLinkView
+        , Html.map mapAppMsg view
+        , Html.map mapSlideshowMsg backLinkView
+        , Html.map mapSlideshowMsg forwardLinkView
         ]
 
 

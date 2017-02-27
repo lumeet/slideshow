@@ -14,7 +14,7 @@ import Array exposing (Array)
 
 {-| update
 -}
-update : Array slide -> slide -> Msg -> Model slide -> ( Model slide, Cmd Msg )
+update : Array slide -> slide -> Msg -> Model slide -> ( Model slide, Cmd msg )
 update slides emptySlide msg model =
     case msg of
         Next ->
@@ -31,13 +31,8 @@ view page =
     View.htmlView page
 
 
-appView : Model slide -> Html Msg
-appView model =
-    View.appView model
-
-
 {-| subscriptions
 -}
-subscriptions : Model a -> Sub Msg
+subscriptions : Model a -> Sub msg
 subscriptions model =
     Sub.none
