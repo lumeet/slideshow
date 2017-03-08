@@ -1,4 +1,4 @@
-module Slideshow.Element exposing (title, subtitle, heading, list, quote)
+module Slideshow.Element exposing (title, subtitle, heading, list, quote, code)
 
 {-| heading
     subtitle
@@ -9,7 +9,7 @@ module Slideshow.Element exposing (title, subtitle, heading, list, quote)
 -}
 
 import Slideshow.Msgs exposing (Msg(..))
-import Html exposing (Html, h1, text, div, ul, li, blockquote)
+import Html exposing (Html, h1, text, div, ul, li, blockquote, pre)
 import Html.Attributes exposing (style)
 
 
@@ -52,14 +52,26 @@ heading content =
 {-|
     list "x"
 -}
-list : List String -> Html Msg
+list : List (List (Html Msg)) -> Html Msg
 list items =
     ul
         []
         (List.map
-            (\item -> li [] [ text item ])
+            (\item -> li [] item)
             items
         )
+
+
+code : String -> Html Msg
+code content =
+    pre
+        [ style
+            [ ( "background", "black" )
+            , ( "color", "white" )
+            , ( "padding", "20px" )
+            ]
+        ]
+        [ text content ]
 
 
 {-|
