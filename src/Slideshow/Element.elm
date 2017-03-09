@@ -20,7 +20,7 @@ title : String -> Html Msg
 title content =
     div
         [ style
-            [ ( "font-size", "100px" ) ]
+            [ ( "font-size", "250%" ) ]
         ]
         [ text content ]
 
@@ -32,7 +32,7 @@ subtitle : String -> Html Msg
 subtitle content =
     div
         [ style
-            [ ( "font-size", "70px" ) ]
+            [ ( "font-size", "180%" ) ]
         ]
         [ text content ]
 
@@ -44,7 +44,7 @@ heading : String -> Html Msg
 heading content =
     h1
         [ style
-            [ ( "font-size", "70px" ) ]
+            [ ( "font-size", "180%" ) ]
         ]
         [ text content ]
 

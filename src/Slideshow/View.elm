@@ -58,9 +58,9 @@ stylesheetLink url =
 bodyStyle =
     [ ( "width", "100%" )
     , ( "height", "100%" )
-    , ( "padding", "100px 200px" )
+    , ( "padding", "5% 10%" )
     , ( "box-sizing", "border-box" )
-    , ( "font-size", "40px" )
+    , ( "font-size", "30px" )
     ]
 
 
