@@ -31,12 +31,12 @@ previousSlide slides emptySlide model =
 
 updateSlideAt slideNo slides emptySlide model =
     let
-        newSlide =
+        ( newSlide, newSlideNo ) =
             case Array.get slideNo slides of
                 Just slide ->
-                    slide
+                    ( slide, Just slideNo )
 
                 Nothing ->
-                    emptySlide
+                    ( emptySlide, Nothing )
     in
-        { model | currentNo = Just slideNo, slide = newSlide }
+        { model | currentNo = newSlideNo, slide = newSlide }
