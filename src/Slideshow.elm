@@ -26,9 +26,9 @@ update slides emptySlide msg model =
 
 {-| view
 -}
-view : Page -> Html Msg
-view page =
-    View.htmlView page
+view : Page -> Array slide -> Maybe Int -> Html Msg
+view page slides currentNo =
+    View.htmlView page slides currentNo
 
 
 {-| subscriptions

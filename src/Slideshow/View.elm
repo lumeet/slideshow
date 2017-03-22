@@ -13,18 +13,20 @@ import Json.Decode as Decode
 import Json.Encode exposing (string)
 import VirtualDom
 import InlineHover exposing (hover)
+import Array exposing (Array)
 
 
 {-|
   htmlView
 -}
-htmlView : Page -> Html Msg
-htmlView { content } =
+htmlView : Page -> Array slide -> Maybe Int -> Html Msg
+htmlView { content } slides currentNo =
     div
         [ style bodyStyle
         , onClick Next
         ]
         [ stylesheetLink "styles.css"
+        , progressIndicator slides currentNo
         , div [] content
         , backLinkView
         ]
@@ -33,12 +35,13 @@ htmlView { content } =
 {-|
   appView
 -}
-appView : (appMsg -> msg) -> (Msg -> msg) -> Html appMsg -> Html msg
-appView mapAppMsg mapSlideshowMsg view =
+appView : (appMsg -> msg) -> (Msg -> msg) -> Array slide -> Maybe Int -> Html appMsg -> Html msg
+appView mapAppMsg mapSlideshowMsg slides currentNo view =
     div
         [ style bodyStyle
         ]
         [ stylesheetLink "styles.css"
+        , Html.map mapSlideshowMsg (progressIndicator slides currentNo)
         , Html.map mapAppMsg view
         , Html.map mapSlideshowMsg backLinkView
         , Html.map mapSlideshowMsg forwardLinkView
@@ -69,7 +72,7 @@ linkStyle =
     , ( "height", "100%" )
     , ( "position", "fixed" )
     , ( "top", "0" )
-    , ( "background", "white" )
+    , ( "background", "transparent" )
     , ( "color", "white" )
     , ( "cursor", "pointer" )
     ]
@@ -81,6 +84,29 @@ backLinkStyle =
 
 forwardLinkStyle =
     ( "right", "0" ) :: linkStyle
+
+
+progressIndicator slides currentNo =
+    div
+        [ style
+            [ ( "left", "0" )
+            , ( "top", "0" )
+            , ( "height", "3px" )
+            , ( "display", "block" )
+            , ( "width", "100%" )
+            , ( "position", "absolute" )
+            , ( "background", "white" )
+            ]
+        ]
+        [ div
+            [ style
+                [ ( "width", (toString <| progressPercentage slides currentNo) ++ "%" )
+                , ( "height", "100%" )
+                , ( "background", "blue" )
+                ]
+            ]
+            []
+        ]
 
 
 backLinkView =
@@ -100,3 +126,17 @@ linkView action styles =
             (Decode.succeed action)
         ]
         []
+
+
+progressPercentage slides currentNo =
+    case currentNo of
+        Just num ->
+            case Array.length slides of
+                0 ->
+                    0
+
+                _ ->
+                    (num + 1) * 100 // Array.length slides
+
+        Nothing ->
+            0
