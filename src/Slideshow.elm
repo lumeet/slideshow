@@ -4,9 +4,9 @@ module Slideshow exposing (view, update, subscriptions)
 @docs update, subscriptions, view
 -}
 
-import Slideshow.Model exposing (Model, Page)
+import Slideshow.Model exposing (Model, MetaSlide, Page)
 import Slideshow.Msgs exposing (Msg(..))
-import Slideshow.Update exposing (nextSlide, previousSlide)
+import Slideshow.Update exposing (nextSlide, previousSlide, showCommentary)
 import Slideshow.View as View
 import Html exposing (Html)
 import Array exposing (Array)
@@ -20,15 +20,18 @@ update slides emptySlide msg model =
         Next ->
             ( model |> nextSlide slides emptySlide, Cmd.none )
 
+        ShowCommentary ->
+            ( model |> showCommentary, Cmd.none )
+
         Previous ->
             ( model |> previousSlide slides emptySlide, Cmd.none )
 
 
 {-| view
 -}
-view : Page -> Array slide -> Maybe Int -> Html Msg
-view page slides currentNo =
-    View.htmlView page slides currentNo
+view : Page -> Array slide -> MetaSlide -> Html Msg
+view page slides meta =
+    View.htmlView page slides meta
 
 
 {-| subscriptions

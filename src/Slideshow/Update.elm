@@ -1,4 +1,4 @@
-module Slideshow.Update exposing (nextSlide, previousSlide)
+module Slideshow.Update exposing (nextSlide, previousSlide, showCommentary)
 
 import Array
 
@@ -6,7 +6,7 @@ import Array
 nextSlide slides emptySlide model =
     let
         slideNo =
-            case model.currentNo of
+            case model.meta.currentNo of
                 Just num ->
                     num + 1
 
@@ -19,7 +19,7 @@ nextSlide slides emptySlide model =
 previousSlide slides emptySlide model =
     let
         slideNo =
-            case model.currentNo of
+            case model.meta.currentNo of
                 Just num ->
                     num - 1
 
@@ -38,5 +38,22 @@ updateSlideAt slideNo slides emptySlide model =
 
                 Nothing ->
                     ( emptySlide, Nothing )
+
+        meta =
+            model.meta
+
+        newMeta =
+            { meta | currentNo = newSlideNo, commentVisible = False }
     in
-        { model | currentNo = newSlideNo, slide = newSlide }
+        { model | meta = newMeta, slide = newSlide }
+
+
+showCommentary model =
+    let
+        meta =
+            model.meta
+
+        newMeta =
+            { meta | commentVisible = True }
+    in
+        { model | meta = newMeta }

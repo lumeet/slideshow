@@ -4,7 +4,7 @@ module Slideshow.View exposing (htmlView, appView)
 @docs htmlView, appView
 -}
 
-import Slideshow.Model exposing (Model, Page)
+import Slideshow.Model exposing (Model, MetaSlide, Page)
 import Slideshow.Msgs exposing (Msg(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (style, property)
@@ -19,15 +19,19 @@ import Array exposing (Array)
 {-|
   htmlView
 -}
-htmlView : Page -> Array slide -> Maybe Int -> Html Msg
-htmlView { content } slides currentNo =
+htmlView : Page -> Array slide -> MetaSlide -> Html Msg
+htmlView { content, commentary } slides meta =
     div
         [ style bodyStyle
-        , onClick Next
+        , onClick (forwardMsg commentary meta)
         ]
         [ stylesheetLink "styles.css"
-        , progressIndicator slides currentNo
+        , progressIndicator slides meta.currentNo
         , div [] content
+        , if meta.commentVisible then
+            comment commentary
+          else
+            (text "")
         , backLinkView
         ]
 
@@ -35,16 +39,16 @@ htmlView { content } slides currentNo =
 {-|
   appView
 -}
-appView : (appMsg -> msg) -> (Msg -> msg) -> Array slide -> Maybe Int -> Html appMsg -> Html msg
-appView mapAppMsg mapSlideshowMsg slides currentNo view =
+appView : (appMsg -> msg) -> (Msg -> msg) -> Array slide -> MetaSlide -> Html appMsg -> Html msg
+appView mapAppMsg mapSlideshowMsg slides meta view =
     div
         [ style bodyStyle
         ]
         [ stylesheetLink "styles.css"
-        , Html.map mapSlideshowMsg (progressIndicator slides currentNo)
+        , Html.map mapSlideshowMsg (progressIndicator slides meta.currentNo)
         , Html.map mapAppMsg view
         , Html.map mapSlideshowMsg backLinkView
-        , Html.map mapSlideshowMsg forwardLinkView
+        , Html.map mapSlideshowMsg (forwardLinkView Nothing meta)
         ]
 
 
@@ -113,8 +117,8 @@ backLinkView =
     linkView Previous backLinkStyle
 
 
-forwardLinkView =
-    linkView Next forwardLinkStyle
+forwardLinkView comment meta =
+    linkView (forwardMsg comment meta) forwardLinkStyle
 
 
 linkView action styles =
@@ -126,6 +130,51 @@ linkView action styles =
             (Decode.succeed action)
         ]
         []
+
+
+comment commentary =
+    case commentary of
+        Just label ->
+            div
+                [ style
+                    [ ( "position", "absolute" )
+                    , ( "top", "20%" )
+                    , ( "right", "10px" )
+                    , ( "display", "inline-block" )
+                    , ( "border-radius", "30px" )
+                    , ( "padding", "20px" )
+                    , ( "border", "solid 2px black" )
+                    ]
+                ]
+                [ text label
+                , div
+                    [ style
+                        [ ( "position", "absolute" )
+                        , ( "width", "0" )
+                        , ( "height", "0" )
+                        , ( "bottom", "-50px" )
+                        , ( "right", "20px" )
+                        , ( "border", "solid 25px" )
+                        , ( "border-color", "black black transparent transparent" )
+                        ]
+                    ]
+                    []
+                , div
+                    [ style
+                        [ ( "position", "absolute" )
+                        , ( "width", "0" )
+                        , ( "height", "0" )
+                        , ( "bottom", "-45px" )
+                        , ( "right", "22px" )
+                        , ( "border", "solid 23px" )
+                        , ( "border-color", "white white transparent transparent" )
+                        ]
+                    ]
+                    []
+                ]
+
+        Nothing ->
+            text ""
 
 
 progressPercentage slides currentNo =
@@ -140,3 +189,12 @@ progressPercentage slides currentNo =
 
         Nothing ->
             0
+
+
+forwardMsg comment { commentVisible } =
+    case ( comment, commentVisible ) of
+        ( Just _, False ) ->
+            ShowCommentary
+
+        _ ->
+            Next
