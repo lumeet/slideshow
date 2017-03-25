@@ -143,7 +143,9 @@ comment commentary =
                     , ( "display", "inline-block" )
                     , ( "border-radius", "30px" )
                     , ( "padding", "20px" )
-                    , ( "border", "solid 2px black" )
+                    , ( "background", "white" )
+                    , ( "color", "black" )
+                    , ( "border", "solid 4px black" )
                     ]
                 ]
                 [ text label

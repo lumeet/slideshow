@@ -5,11 +5,11 @@ module Slideshow.Element exposing (title, subtitle, heading, list, quote, code)
     title
     list
     quote
-@docs heading, title, subtitle, list, quote
+@docs heading, title, subtitle, list, quote, code
 -}
 
 import Slideshow.Msgs exposing (Msg(..))
-import Html exposing (Html, h1, text, div, ul, li, blockquote, pre)
+import Html exposing (Html, h1, text, div, ul, li, blockquote, pre, span)
 import Html.Attributes exposing (style)
 
 
@@ -62,11 +62,14 @@ list items =
         )
 
 
+{-|
+    code "x"
+-}
 code : String -> Html Msg
 code content =
     pre
         [ style
-            [ ( "background", "black" )
+            [ ( "background", "#222" )
             , ( "color", "white" )
             , ( "padding", "20px" )
             ]
@@ -79,4 +82,13 @@ code content =
 -}
 quote : String -> Html Msg
 quote str =
-    blockquote [] [ text str ]
+    blockquote []
+        [ span
+            [ style
+                [ ( "font-size", "300%" )
+                , ( "color", "gray" )
+                ]
+            ]
+            [ text "\"" ]
+        , text str
+        ]
