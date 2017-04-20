@@ -23,16 +23,16 @@ htmlView : Page -> Array slide -> MetaSlide -> Html Msg
 htmlView { content, commentary } slides meta =
     div
         [ style bodyStyle
-        , onClick (forwardMsg commentary meta)
         ]
         [ stylesheetLink "styles.css"
         , progressIndicator slides meta.currentNo
-        , div [] content
+        , div [ style [ ( "height", "100%" ) ] ] content
         , if meta.commentVisible then
             comment commentary
           else
             (text "")
         , backLinkView
+        , forwardLinkView commentary meta
         ]
 
 
